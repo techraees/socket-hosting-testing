@@ -1,0 +1,41 @@
+<!-- public/quiz.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz</title>
+  </head>
+  <body>
+    <h1>Quiz</h1>
+    <div id="question"></div>
+    <div id="options"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      // Event listener for receiving a question from the server
+      socket.on("question", (question) => {
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+
+        questionElement.textContent = question.text;
+
+        // Clear previous options
+        optionsElement.innerHTML = "";
+
+        // Render options
+        question.options.forEach((option, index) => {
+          const button = document.createElement("button");
+          button.textContent = option;
+          button.addEventListener("click", () => {
+            socket.emit("answer", option);
+          });
+          optionsElement.appendChild(button);
+        });
+      });
+    </script>
+  </body>
+</html>
